@@ -151,21 +151,6 @@ namespace Newtonsoft.Json.Serialization
             DictionaryKeyType = keyType;
             DictionaryValueType = valueType;
 
-#if (NET20 || NET35)
-            if (DictionaryValueType != null && ReflectionUtils.IsNullableType(DictionaryValueType))
-            {
-                Type tempDictioanryType;
-
-                // bug in .NET 2.0 & 3.5 that Dictionary<TKey, Nullable<TValue>> throws an error when adding null via IDictionary[key] = object
-                // wrapper will handle calling Add(T) instead
-                if (ReflectionUtils.InheritsGenericDefinition(CreatedType, typeof(Dictionary<,>), out tempDictioanryType))
-                {
-                    ShouldCreateWrapper = true;
-                }
-            }
-#endif
-
-#if !(NET20 || NET35 || NET40 || PORTABLE40)
             Type immutableCreatedType;
             ObjectConstructor<object> immutableParameterizedCreator;
             if (ImmutableCollectionsUtils.TryBuildImmutableForDictionaryContract(underlyingType, DictionaryKeyType, DictionaryValueType, out immutableCreatedType, out immutableParameterizedCreator))
@@ -174,7 +159,6 @@ namespace Newtonsoft.Json.Serialization
                 _parametrizedCreator = immutableParameterizedCreator;
                 IsReadOnlyOrFixedSize = true;
             }
-#endif
         }
 
         internal IWrappedDictionary CreateWrapper(object dictionary)
