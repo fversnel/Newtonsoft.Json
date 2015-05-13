@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using Newtonsoft.Json.Utilities;
@@ -109,22 +110,18 @@ namespace Newtonsoft.Json.Serialization
                 if (ReflectionUtils.IsGenericDefinition(UnderlyingType, typeof(IDictionary<,>)))
                     CreatedType = typeof(Dictionary<,>).MakeGenericType(keyType, valueType);
 
-#if !(NET40 || NET35 || NET20 || PORTABLE40)
-                IsReadOnlyOrFixedSize = ReflectionUtils.InheritsGenericDefinition(underlyingType, typeof(ReadOnlyDictionary<,>));
-#endif
+                IsReadOnlyOrFixedSize = ReflectionUtils.InheritsGenericDefinition(underlyingType, typeof(ImmutableDictionary<,>));
             }
-#if !(NET40 || NET35 || NET20 || PORTABLE40)
             else if (ReflectionUtils.ImplementsGenericDefinition(underlyingType, typeof(IReadOnlyDictionary<,>), out _genericCollectionDefinitionType))
             {
                 keyType = _genericCollectionDefinitionType.GetGenericArguments()[0];
                 valueType = _genericCollectionDefinitionType.GetGenericArguments()[1];
 
                 if (ReflectionUtils.IsGenericDefinition(UnderlyingType, typeof(IReadOnlyDictionary<,>)))
-                    CreatedType = typeof(ReadOnlyDictionary<,>).MakeGenericType(keyType, valueType);
+                    CreatedType = typeof(ImmutableSortedDictionary<,>).MakeGenericType(keyType, valueType);
 
                 IsReadOnlyOrFixedSize = true;
             }
-#endif
             else
             {
                 ReflectionUtils.GetDictionaryKeyValueTypes(UnderlyingType, out keyType, out valueType);

@@ -132,16 +132,13 @@ namespace Newtonsoft.Json.Serialization
                     || ReflectionUtils.IsGenericDefinition(underlyingType, typeof(IList<>)))
                     CreatedType = typeof(List<>).MakeGenericType(CollectionItemType);
 
-#if !(NET20 || NET35 || PORTABLE40)
                 if (ReflectionUtils.IsGenericDefinition(underlyingType, typeof(ISet<>)))
                     CreatedType = typeof(HashSet<>).MakeGenericType(CollectionItemType);
-#endif
 
                 _parametrizedConstructor = CollectionUtils.ResolveEnumerableCollectionConstructor(underlyingType, CollectionItemType);
                 canDeserialize = true;
                 ShouldCreateWrapper = true;
             }
-#if !(NET40 || NET35 || NET20 || PORTABLE40)
             else if (ReflectionUtils.ImplementsGenericDefinition(underlyingType, typeof(IReadOnlyCollection<>), out tempCollectionType))
             {
                 CollectionItemType = tempCollectionType.GetGenericArguments()[0];
@@ -155,7 +152,6 @@ namespace Newtonsoft.Json.Serialization
                 IsReadOnlyOrFixedSize = true;
                 canDeserialize = HasParametrizedCreator;
             }
-#endif
             else if (ReflectionUtils.ImplementsGenericDefinition(underlyingType, typeof(IEnumerable<>), out tempCollectionType))
             {
                 CollectionItemType = tempCollectionType.GetGenericArguments()[0];

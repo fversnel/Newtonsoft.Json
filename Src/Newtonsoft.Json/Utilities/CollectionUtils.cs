@@ -94,10 +94,8 @@ namespace Newtonsoft.Json.Utilities
                 return true;
             if (ReflectionUtils.ImplementsGenericDefinition(type, typeof(IDictionary<,>)))
                 return true;
-#if !(NET40 || NET35 || NET20 || PORTABLE40)
             if (ReflectionUtils.ImplementsGenericDefinition(type, typeof(IReadOnlyDictionary<,>)))
                 return true;
-#endif
 
             return false;
         }
